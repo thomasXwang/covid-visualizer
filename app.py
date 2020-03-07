@@ -57,3 +57,5 @@ chart_data = pd.DataFrame(
 )
 
 st.area_chart(chart_data)
+
+st.header("Test")
