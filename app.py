@@ -22,12 +22,21 @@ def load_data(data_url):
     return df
 
 
+@st.cache
+def get_countries(df):
+    return sorted(df["Country/Region"].unique().tolist())
+
+
+def show_sidebar(countries):
+    selected_country = st.sidebar.selectbox("Select a country", countries)
+
+    return selected_country
+
+
 def main():
 
     st.header("Covid-19 visualizations")
 
-    dates = get_dates()
-    # st.write(dates)
 
     st.subheader("Input Dataframe")
     df_original = load_data(DATA_SOURCE)
@@ -35,16 +44,61 @@ def main():
     st.write(df_original.shape)
     st.write(df_original)
 
-    df_original.describe()
-    st.write(df_original.dtypes)
+    st.write(df_original.describe())
+    # st.write(df_original.dtypes)
 
     st.info("Data Loaded")
 
-    st.write("DF")
     df =  df_original.copy(deep=True)
 
-    st.write(df.shape)
-    st.write(df)
+    countries = get_countries(df_original)
+    st.write(countries)
+
+    selected_country = show_sidebar(countries)
+
+    df_country = df[df["Country/Region"] == selected_country]
+    st.write(df_country)
+
+    dfs_plot = {}
+
+    df_plot = df_country.copy(deep=True)
+    df_plot = df_plot.drop(columns=["Province/State", "Country/Region", "Lat", "Long"])
+    df_plot = df_plot.sum(axis=0)
+    df_plot = pd.DataFrame(df_plot)
+    st.write(df_plot.columns.tolist())
+    df_plot.columns = ["Cases"]
+    
+    dfs_plot[selected_country] = df_plot
+    
+    st.write(df_plot)
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=dfs_plot[selected_country].index, 
+        y=dfs_plot[selected_country]["Cases"], 
+        name="Cases", 
+        # line_color="red"
+    ))
+
+    fig.update_layout(title_text='Time Series with Rangeslider',
+                  xaxis_rangeslider_visible=True)
+    # fig.update_layout(xaxis_range=['2020-01-01','2020-03-20'],
+    #               title_text="Manually Set Date Range")
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Infected count",
+        title_text=f"Number of cases in {selected_country}",
+        
+        width=1000,
+        height=800  )
+
+    st.write(fig)
+
+    # st.write("DF")
+    # df =  df_original.copy(deep=True)
+
+    # st.write(df.shape)
+    # st.write(df)
 
   
 
