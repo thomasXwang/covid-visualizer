@@ -1,4 +1,6 @@
-# streamlit-experiment-2
-Streamlit template for quick displaying and deployment on Heroku
+# covid-visualizer
+Visualizing the data from John Hopkins
+https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data
 
-http://megatest52.herokuapp.com/
+## Deployment
+To be deployed
