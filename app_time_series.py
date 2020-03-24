@@ -12,7 +12,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 
-DATA_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+DATA_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 # date = "01-22-2020"
 # data_url = DATA_SOURCE + date + ".csv"
 # # st.write(data_url)
