@@ -147,9 +147,12 @@ def main():
     if data_choice == "Deaths":
         DATA_SOURCE = DEATHS_SOURCE
 
+    st.write("Data is updated daily")
+    st.write("It is provided by John Hopkins University: https://github.com/CSSEGISandData/COVID-19")
     df_original = load_data(DATA_SOURCE)
     # st.write("DF Original")
     st.info("Data Loaded")
+    st.write(f"Data last updated: {df_original.columns.tolist()[-1]}")
     st.write(df_original.shape)
     st.write(df_original)
 
