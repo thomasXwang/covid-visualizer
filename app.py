@@ -30,8 +30,47 @@ def get_countries(df):
 def show_sidebar(countries):
     selected_country = st.sidebar.selectbox("Select a country", countries)
 
-    
     return selected_country
+
+
+def get_df_plot(df, country):
+    df_country = df[df["Country/Region"] == country]
+    # st.write(df_country)
+
+    df_plot = df_country.copy(deep=True)
+    df_plot = df_plot.drop(columns=["Province/State", "Country/Region", "Lat", "Long"])
+    df_plot = df_plot.sum(axis=0)
+    df_plot = pd.DataFrame(df_plot)
+    # st.write(df_plot.columns.tolist())
+    df_plot.columns = ["Cases"]
+
+    return df_plot
+
+
+def get_fig(dfs_plot):
+    fig = go.Figure()
+
+    for country, df in dfs_plot.items():
+        fig.add_trace(go.Scatter(
+            x=df.index, 
+            y=df["Cases"], 
+            name=f"{country}", 
+            # line_color="red"
+        ))
+
+    fig.update_layout(title_text='Time Series with Rangeslider',
+                xaxis_rangeslider_visible=True)
+    # fig.update_layout(xaxis_range=['2020-01-01','2020-03-20'],
+    #               title_text="Manually Set Date Range")
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Number of cases",
+        title_text=f"Number of cases of Covid-19",
+        
+        width=1000,
+        height=800)
+
+    return fig
 
 
 def main():
@@ -66,16 +105,8 @@ def main():
         dfs_plot = {}
 
         for country in selected_countries:
-            df_country = df[df["Country/Region"] == country]
-            # st.write(df_country)
-
-            df_plot = df_country.copy(deep=True)
-            df_plot = df_plot.drop(columns=["Province/State", "Country/Region", "Lat", "Long"])
-            df_plot = df_plot.sum(axis=0)
-            df_plot = pd.DataFrame(df_plot)
-            # st.write(df_plot.columns.tolist())
-            df_plot.columns = ["Cases"]
             
+            df_plot = get_df_plot(df, country)
             dfs_plot[country] = df_plot
 
             # st.write(f"{country}")
@@ -85,27 +116,7 @@ def main():
 
         # st.write(dfs_plot.keys())
 
-        fig = go.Figure()
-
-        for country, df in dfs_plot.items():
-            fig.add_trace(go.Scatter(
-                x=df.index, 
-                y=df["Cases"], 
-                name=f"{country}", 
-                # line_color="red"
-            ))
-
-        fig.update_layout(title_text='Time Series with Rangeslider',
-                    xaxis_rangeslider_visible=True)
-        # fig.update_layout(xaxis_range=['2020-01-01','2020-03-20'],
-        #               title_text="Manually Set Date Range")
-        fig.update_layout(
-            xaxis_title="Date",
-            yaxis_title="Number of cases",
-            title_text=f"Number of cases of Covid-19",
-            
-            width=1000,
-            height=800  )
+        fig = get_fig(dfs_plot)
 
         st.write(fig)
 
@@ -116,6 +127,4 @@ def main():
     # st.write(df)
 
   
-
-
 main()
