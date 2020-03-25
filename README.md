@@ -1,10 +1,10 @@
 # covid-visualizer
 
-<img src="/img/screenshot01.png" height="400">
+<img src="/img/screenshot_01.png" height="400">
 
-<img src="/img/screenshot02.png" height="400">
+<img src="/img/screenshot_02.png" height="400">
 
-<img src="/img/screenshot03.png" height="400">
+<img src="/img/screenshot_03.png" height="400">
 
 Visualizing the Covid-19 data from John Hopkins
 
