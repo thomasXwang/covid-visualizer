@@ -1,4 +1,4 @@
-# covid19-visualizer
+# Covid-19 Visualizer
 
 https://covid19-visualizer.herokuapp.com/
 

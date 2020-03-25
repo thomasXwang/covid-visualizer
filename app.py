@@ -1,7 +1,6 @@
 import streamlit as st
 
 import datetime
-# from datetime import date
 
 import os 
 from PIL import Image
@@ -153,8 +152,10 @@ def main():
     # st.write("DF Original")
     st.info("Data Loaded")
     st.write(f"Data last updated: {df_original.columns.tolist()[-1]}")
-    st.write(df_original.shape)
-    st.write(df_original)
+    show_data = st.checkbox("Show Data")
+    if show_data:
+        st.write(df_original.shape)
+        st.write(df_original)
 
     # st.write(df_original.describe())
     # st.write(df_original.dtypes)
