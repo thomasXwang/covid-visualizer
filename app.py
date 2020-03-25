@@ -224,7 +224,7 @@ def main():
     # st.write(df)
 
     st.info("""\
-        Source: [GitHub](https://github.com/Thomas2512/covid-visualizer)
+        Source code: [GitHub](https://github.com/Thomas2512/covid-visualizer) | [Thomas Wang](https://github.com/Thomas2512/)
     """)
     st.info("""\
         Data Source: [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)
