@@ -172,7 +172,7 @@ def main():
 
     
     top_n = st.slider(
-        "Select number of most-infected countries",
+        "Select number of most-infected countries to view",
         min_value=5,
         max_value=20,
         value=7
