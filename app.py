@@ -132,9 +132,9 @@ def get_map_plot(df2):
 
 def main():
 
-    st.header("Covid-19 visualizations")
+    st.header("Covid-19 visualizer")
 
-    st.subheader("Input Dataframe")
+    st.subheader("Input Data")
 
     st.sidebar.header("⚙️ Parameters")
     data_choice = st.sidebar.radio(
@@ -148,14 +148,15 @@ def main():
         DATA_SOURCE = DEATHS_SOURCE
 
     df_original = load_data(DATA_SOURCE)
-    st.write("DF Original")
+    # st.write("DF Original")
+    st.info("Data Loaded")
     st.write(df_original.shape)
     st.write(df_original)
 
     # st.write(df_original.describe())
     # st.write(df_original.dtypes)
 
-    st.info("Data Loaded")
+    
 
     df =  df_original.copy(deep=True)
 
