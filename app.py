@@ -14,6 +14,8 @@ import plotly.graph_objects as go
 
 DATA_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 
+COUNTRY_COL = "Country/Region"
+PROVINCE_COL = "Province/State"
 
 
 @st.cache
@@ -24,7 +26,7 @@ def load_data(data_url):
 
 @st.cache
 def get_countries(df):
-    return sorted(df["Country/Region"].unique().tolist())
+    return sorted(df[COUNTRY_COL].unique().tolist())
 
 
 def show_sidebar(countries):
@@ -33,12 +35,27 @@ def show_sidebar(countries):
     return selected_country
 
 
+@st.cache
+def get_top_countries(df2, n=6):
+
+    df = df2.copy(deep=True)
+    df = df.drop(columns=[PROVINCE_COL, "Lat", "Long"])
+    # st.write(df.groupby(COUNTRY_COL).agg("sum"))
+    top = df.groupby(COUNTRY_COL).agg("sum").sort_values(by=df.columns.tolist()[-1], ascending=False)
+    # st.write(top)
+    top_countries = top.head(n).index.tolist()
+    # st.write(top_countries)
+
+    return top_countries
+
+
+@st.cache
 def get_df_plot(df, country):
-    df_country = df[df["Country/Region"] == country]
+    df_country = df[df[COUNTRY_COL] == country]
     # st.write(df_country)
 
     df_plot = df_country.copy(deep=True)
-    df_plot = df_plot.drop(columns=["Province/State", "Country/Region", "Lat", "Long"])
+    df_plot = df_plot.drop(columns=[PROVINCE_COL, COUNTRY_COL, "Lat", "Long"])
     df_plot = df_plot.sum(axis=0)
     df_plot = pd.DataFrame(df_plot)
     # st.write(df_plot.columns.tolist())
@@ -47,6 +64,7 @@ def get_df_plot(df, country):
     return df_plot
 
 
+@st.cache
 def get_fig(dfs_plot):
     fig = go.Figure()
 
@@ -73,12 +91,13 @@ def get_fig(dfs_plot):
     return fig
 
 
+
 def main():
 
     st.header("Covid-19 visualizations")
 
-
     st.subheader("Input Dataframe")
+    
     df_original = load_data(DATA_SOURCE)
     st.write("DF Original")
     st.write(df_original.shape)
@@ -94,10 +113,25 @@ def main():
     countries = get_countries(df_original)
     # st.write(countries)
 
+
+    st.subheader("Evolution of number of cases")
+
+    
+    top_n = st.slider(
+        "Select number of most-infected countries",
+        min_value=5,
+        max_value=20,
+        value=7
+    )
+
+    top_countries = get_top_countries(df, n=top_n)
+    # st.write(top_countries)
+
+
     selected_countries = st.multiselect(
         "Select the countries you want to visualize",
         countries,
-        default=["France", "China", "Italy", "Spain", "Germany", "US", "United Kingdom"]
+        default=top_countries
     )
 
     if selected_countries != []:
