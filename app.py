@@ -91,7 +91,7 @@ def get_fig(dfs_plot):
     return fig
 
 
-# @st.cache
+@st.cache
 def get_map_plot(df2):
     # https://plotly.com/python/scatter-plots-on-maps/
     # https://plotly.com/python/bubble-maps/
@@ -102,7 +102,7 @@ def get_map_plot(df2):
     #                  hover_name=COUNTRY_COL, size=df.columns.tolist()[-1],
     #                  projection="natural earth")
 
-    st.write(df)
+    # st.write(df)
     scale = 50
 
     fig = go.Figure(data=go.Scattergeo(
