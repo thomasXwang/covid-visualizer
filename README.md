@@ -1,4 +1,4 @@
-# covid-visualizer
+# covid19-visualizer
 
 <img src="/img/screenshot_01.png" height="400">
 
