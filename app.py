@@ -13,7 +13,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-DATA_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+CONFIRMED_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+DEATHS_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 
 COUNTRY_COL = "Country/Region"
 PROVINCE_COL = "Province/State"
@@ -81,9 +82,9 @@ def get_fig(dfs_plot):
     # fig.update_layout(xaxis_range=['2020-01-01','2020-03-20'],
     #               title_text="Manually Set Date Range")
     fig.update_layout(
-        xaxis_title="Date",
-        yaxis_title="Number of cases",
-        title_text="Number of cases of Covid-19",
+        xaxis_title="To Date",
+        yaxis_title="Total number of cases",
+        title_text="Total number of cases of Covid-19",
         
         width=1000,
         height=800)
@@ -134,7 +135,18 @@ def main():
     st.header("Covid-19 visualizations")
 
     st.subheader("Input Dataframe")
+
+    st.sidebar.header("⚙️ Parameters")
+    data_choice = st.sidebar.radio(
+        "Visualize numbers of ",
+        ["Infections", "Deaths"],
+        index=0
+    )
     
+    DATA_SOURCE = CONFIRMED_SOURCE
+    if data_choice == "Deaths":
+        DATA_SOURCE = DEATHS_SOURCE
+
     df_original = load_data(DATA_SOURCE)
     st.write("DF Original")
     st.write(df_original.shape)
@@ -151,7 +163,7 @@ def main():
     # st.write(countries)
 
 
-    st.subheader("Evolution of number of cases")
+    st.subheader("Evolution of the total number of cases")
 
     
     top_n = st.slider(
