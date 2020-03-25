@@ -11,6 +11,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 
+DATA_SOURCE_URL = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
 
 CONFIRMED_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 DEATHS_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
@@ -146,12 +147,12 @@ def main():
     if data_choice == "Deaths":
         DATA_SOURCE = DEATHS_SOURCE
 
-    st.write("Data is updated daily")
-    st.write("It is provided by John Hopkins University: https://github.com/CSSEGISandData/COVID-19")
+    # st.write("Data is updated daily")
+    # st.write("It is provided by John Hopkins University: https://github.com/CSSEGISandData/COVID-19")
     df_original = load_data(DATA_SOURCE)
     # st.write("DF Original")
     st.info("Data Loaded")
-    st.write(f"Data last updated: {df_original.columns.tolist()[-1]}")
+    st.write(f"[Data]({DATA_SOURCE_URL}) last updated on: {df_original.columns.tolist()[-1]}")
     show_data = st.checkbox("Show Data")
     if show_data:
         st.write(df_original.shape)
@@ -222,6 +223,11 @@ def main():
     # st.write(df.shape)
     # st.write(df)
 
-
+    st.info("""\
+        Source: [GitHub](https://github.com/Thomas2512/covid-visualizer)
+    """)
+    st.info("""\
+        Data Source: [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)
+    """)
   
 main()
