@@ -29,12 +29,6 @@ def get_countries(df):
     return sorted(df[COUNTRY_COL].unique().tolist())
 
 
-def show_sidebar(countries):
-    selected_country = st.sidebar.selectbox("Select a country", countries)
-
-    return selected_country
-
-
 @st.cache
 def get_top_countries(df2, n=6):
 
