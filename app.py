@@ -9,6 +9,7 @@ from PIL import Image
 import pandas as pd
 import numpy as np
 
+import plotly.express as px
 import plotly.graph_objects as go
 
 
@@ -67,6 +68,11 @@ def get_fig(dfs_plot):
             x=df.index, 
             y=df["Cases"], 
             name=f"{country}", 
+            # Unsuccessful attempt to add non-hovering text
+            # https://plotly.com/python/text-and-annotations/#adding-text-to-data-in-line-and-scatter-plots
+            # text=f"{country}",
+            # textposition="top center",
+            # mode= "lines+text",
             # line_color="red"
         ))
 
@@ -77,13 +83,49 @@ def get_fig(dfs_plot):
     fig.update_layout(
         xaxis_title="Date",
         yaxis_title="Number of cases",
-        title_text=f"Number of cases of Covid-19",
+        title_text="Number of cases of Covid-19",
         
         width=1000,
         height=800)
 
     return fig
 
+
+# @st.cache
+def get_map_plot(df2):
+    # https://plotly.com/python/scatter-plots-on-maps/
+    # https://plotly.com/python/bubble-maps/
+    df = df2.copy(deep=True)
+
+    # df["Description"] = df[COUNTRY_COL].str.cat(df[df.columns.tolist()[-1]].astype(str), sep="_")
+    # fig = px.scatter_geo(df, locations="iso_alpha", color="continent",
+    #                  hover_name=COUNTRY_COL, size=df.columns.tolist()[-1],
+    #                  projection="natural earth")
+
+    st.write(df)
+    scale = 1100
+
+    fig = go.Figure(data=go.Scattergeo(
+        lon = df['Long'],
+        lat = df['Lat'],
+        # text = df[COUNTRY_COL],
+        text = df[df.columns.tolist()[-1]],
+        mode = 'markers',
+        marker = dict(
+                size = df[df.columns.tolist()[-1]]/scale,
+                color = "red",
+                line_width = 1
+        )
+    ))
+
+    fig.update_layout(
+        title="Number of cases of Covid-19",
+        
+        width=1000,
+        height=1000)
+
+
+    return fig
 
 
 def main():
@@ -121,7 +163,6 @@ def main():
     top_countries = get_top_countries(df, n=top_n)
     # st.write(top_countries)
 
-
     selected_countries = st.multiselect(
         "Select the countries you want to visualize",
         countries,
@@ -148,11 +189,21 @@ def main():
 
         st.write(fig)
 
+
+
+
+    st.subheader("Map of infections")
+
+    fig = get_map_plot(df)
+
+    st.write(fig)
+
     # st.write("DF")
     # df =  df_original.copy(deep=True)
 
     # st.write(df.shape)
     # st.write(df)
+
 
   
 main()
