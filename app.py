@@ -103,7 +103,7 @@ def get_map_plot(df2):
     #                  projection="natural earth")
 
     st.write(df)
-    scale = 1100
+    scale = 50
 
     fig = go.Figure(data=go.Scattergeo(
         lon = df['Long'],
@@ -114,7 +114,8 @@ def get_map_plot(df2):
         marker = dict(
                 size = df[df.columns.tolist()[-1]]/scale,
                 color = "red",
-                line_width = 1
+                line_width = 1,
+                sizemode="area"
         )
     ))
 
