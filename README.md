@@ -1,5 +1,7 @@
 # covid19-visualizer
 
+https://covid19-visualizer.herokuapp.com/
+
 <img src="/img/screenshot_01.png" height="400">
 
 <img src="/img/screenshot_02.png" height="400">
