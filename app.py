@@ -113,10 +113,11 @@ def get_map_plot(df2):
         text = df[df.columns.tolist()[-1]],
         mode = 'markers',
         marker = dict(
-                size = df[df.columns.tolist()[-1]]/scale,
-                color = "red",
-                line_width = 1,
-                sizemode="area"
+            # Changed it to np.max to avoid errors when JHU gives a negative number
+            size = np.maximum(df[df.columns.tolist()[-1]]/scale, 0),
+            color = "red",
+            line_width = 1,
+            sizemode="area"
         )
     ))
 
