@@ -108,11 +108,11 @@ def get_map_plot(df2):
 
     df["text"] = (
         df[COUNTRY_COL] 
-        + "<br>" 
+        + "<br> " 
         + df[PROVINCE_COL].replace(np.nan, '', regex=True) 
         + "<br>"
         + df[df.columns.tolist()[-1]].apply(str)
-    ).str.replace("<br><br>", "<br>")
+    ).str.replace("<br> <br>", "<br>")
     # df["text"] = df.agg(lambda x: f"{x[COUNTRY_COL]} - {x[PROVINCE_COL]} :  {str(x[df.columns.tolist()[-1]])}", axis=1)
     # st.write(df["text"])
     # st.write(df[COUNTRY_COL])
