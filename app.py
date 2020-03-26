@@ -106,15 +106,27 @@ def get_map_plot(df2):
     # st.write(df)
     scale = 50
 
+    df["text"] = (
+        df[COUNTRY_COL] 
+        + "<br>" 
+        + df[PROVINCE_COL].replace(np.nan, '', regex=True) 
+        + "<br>"
+        + df[df.columns.tolist()[-1]].apply(str)
+    ).str.replace("<br><br>", "<br>")
+    # df["text"] = df.agg(lambda x: f"{x[COUNTRY_COL]} - {x[PROVINCE_COL]} :  {str(x[df.columns.tolist()[-1]])}", axis=1)
+    st.write(df["text"])
+    st.write(df[COUNTRY_COL])
+
     fig = go.Figure(data=go.Scattergeo(
         lon = df['Long'],
         lat = df['Lat'],
+        hoverinfo="text",
         # text = df[COUNTRY_COL],
-        text = df[df.columns.tolist()[-1]],
+        text = df["text"],
         mode = 'markers',
         marker = dict(
             # Changed it to np.max to avoid errors when JHU gives a negative number
-            size = np.maximum(df[df.columns.tolist()[-1]]/scale, 0),
+            size = np.maximum(df2[df2.columns.tolist()[-1]]/scale, 0),
             color = "red",
             line_width = 1,
             sizemode="area"
@@ -126,7 +138,6 @@ def get_map_plot(df2):
         
         width=1000,
         height=1000)
-
 
     return fig
 

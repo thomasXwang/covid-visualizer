@@ -3,7 +3,7 @@
 ## Small Fixes
 
 * add a Worldwide choice for the Evolution graph
-* add the Location name on the Bubble Map
+* ✔️ add the Location name on the Bubble Map
 
 ## New Features
 
