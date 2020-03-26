@@ -114,8 +114,8 @@ def get_map_plot(df2):
         + df[df.columns.tolist()[-1]].apply(str)
     ).str.replace("<br><br>", "<br>")
     # df["text"] = df.agg(lambda x: f"{x[COUNTRY_COL]} - {x[PROVINCE_COL]} :  {str(x[df.columns.tolist()[-1]])}", axis=1)
-    st.write(df["text"])
-    st.write(df[COUNTRY_COL])
+    # st.write(df["text"])
+    # st.write(df[COUNTRY_COL])
 
     fig = go.Figure(data=go.Scattergeo(
         lon = df['Long'],
