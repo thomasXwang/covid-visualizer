@@ -61,7 +61,7 @@ def get_df_plot(df, country):
 
 
 @st.cache
-def get_fig(dfs_plot):
+def get_fig(dfs_plot, log_scale_choice):
     fig = go.Figure()
 
     for country, df in dfs_plot.items():
@@ -88,6 +88,10 @@ def get_fig(dfs_plot):
         
         width=1000,
         height=800)
+
+    if log_scale_choice == "Logarithmic":
+        fig.update_yaxes(type="log")
+
 
     return fig
 
@@ -142,14 +146,19 @@ def main():
         ["Infections", "Deaths"],
         index=0
     )
-    
-    DATA_SOURCE = CONFIRMED_SOURCE
-    if data_choice == "Deaths":
-        DATA_SOURCE = DEATHS_SOURCE
+    log_scale_choice = st.sidebar.radio(
+        "Plot Y-axis Scale",
+        ["Standard", "Logarithmic"]
+    )
+
+    df_confirmed = load_data(CONFIRMED_SOURCE)
+    df_deaths = load_data(DEATHS_SOURCE)
 
     # st.write("Data is updated daily")
     # st.write("It is provided by John Hopkins University: https://github.com/CSSEGISandData/COVID-19")
-    df_original = load_data(DATA_SOURCE)
+    df_original = df_confirmed
+    if data_choice == "Deaths":
+        df_original = df_deaths
     # st.write("DF Original")
     st.info("Data Loaded")
     st.write(f"[Data]({DATA_SOURCE_URL}) last updated on: {df_original.columns.tolist()[-1]}")
@@ -204,7 +213,7 @@ def main():
 
         # st.write(dfs_plot.keys())
 
-        fig = get_fig(dfs_plot)
+        fig = get_fig(dfs_plot, log_scale_choice)
 
         st.write(fig)
 
@@ -227,7 +236,7 @@ def main():
         Source code: [GitHub](https://github.com/Thomas2512/covid-visualizer) | [Thomas Wang](https://github.com/Thomas2512/)
     """)
     st.info("""\
-        Data Source: [Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)
+        Data Source: [John Hopkins University](https://github.com/CSSEGISandData/COVID-19)
     """)
   
 main()
