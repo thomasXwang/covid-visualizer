@@ -77,21 +77,20 @@ def get_fig(dfs_plot, log_scale_choice):
             # line_color="red"
         ))
 
-    fig.update_layout(title_text='Time Series with Rangeslider',
-                xaxis_rangeslider_visible=True)
     # fig.update_layout(xaxis_range=['2020-01-01','2020-03-20'],
     #               title_text="Manually Set Date Range")
     fig.update_layout(
         xaxis_title="To Date",
         yaxis_title="Total number of cases",
         title_text="Total number of cases of Covid-19",
+
+        xaxis_rangeslider_visible=True,
         
         width=1000,
         height=800)
 
     if log_scale_choice == "Logarithmic":
         fig.update_yaxes(type="log")
-
 
     return fig
 
@@ -146,6 +145,71 @@ def get_map_plot(df2):
     return fig
 
 
+@st.cache
+def get_df_mortality_rate(df_confirmed, df_deaths):
+
+    df_countries = df_confirmed.copy(deep=True).iloc[:, :4]
+
+    df_confirmed_copy = df_confirmed.copy(deep=True)
+    df_deaths_copy = df_deaths.copy(deep=True)
+    df_confirmed_reduced = df_confirmed_copy.iloc[:, 4:].sum(axis=1).replace(0, 1)
+    df_deaths_reduced = df_deaths_copy.iloc[:, 4:].sum(axis=1)
+
+    df_mortality_rates = df_deaths_reduced / df_confirmed_reduced
+
+    return pd.concat([df_countries, df_mortality_rates], axis=1)
+
+
+@st.cache
+def get_fig_country(country, df_confirmed, df_deaths):
+    fig = go.Figure()
+
+    df_confirmed_country = get_df_plot(df_confirmed, country).cumsum(axis=0)
+    df_deaths_country = get_df_plot(df_deaths, country).cumsum(axis=0)
+
+    # st.write(df_confirmed_country)
+    # st.write(df_deaths_country)
+
+    mortality_rate = df_deaths_country.iloc[-1,0] / df_confirmed_country.iloc[-1,0]
+
+    fig.add_trace(go.Scatter(
+        x=df_confirmed_country.index, 
+        y=df_confirmed_country["Cases"], 
+        name=f"Confirmed cases",
+        yaxis="y1" 
+    ))
+    fig.add_trace(go.Scatter(
+        x=df_deaths_country.index, 
+        y=df_deaths_country["Cases"], 
+        name=f"Deaths",
+        yaxis="y2", 
+    ))
+
+    fig.update_layout(
+        xaxis_title="To Date",
+        yaxis=dict(
+            title="Number of Confirmed cases",
+            titlefont=dict(color="#1f77b4"),
+            tickfont=dict(color="#1f77b4"),
+        ),
+        yaxis2=dict(
+            title="Number of Deaths",
+            titlefont=dict(color="#ff7f0e"),
+            tickfont=dict(color="#ff7f0e"),
+            anchor="x",
+            overlaying="y",
+            side="right",
+        ),
+        title_text=f"Total number of cases of Covid-19 in {country}",
+
+        xaxis_rangeslider_visible=True,
+        
+        width=1000,
+        height=800)
+
+    return (mortality_rate, fig)
+
+
 def main():
 
     st.header("Covid-19 visualizer")
@@ -153,96 +217,128 @@ def main():
     st.subheader("Input Data")
 
     st.sidebar.header("⚙️ Parameters")
-    data_choice = st.sidebar.radio(
-        "Visualize numbers of ",
-        ["Infections", "Deaths"],
+
+    viz_choice = st.sidebar.selectbox(
+        "Visualization",
+        ["World view", "Country view"],
         index=0
     )
-    log_scale_choice = st.sidebar.radio(
-        "Plot Y-axis Scale",
-        ["Standard", "Logarithmic"]
-    )
+
+    
 
     df_confirmed = load_data(CONFIRMED_SOURCE)
     df_deaths = load_data(DEATHS_SOURCE)
 
+    st.info("Data Loaded")
+    df_original = df_confirmed
+    st.write(f"[Data]({DATA_SOURCE_URL}) last updated on: {df_original.columns.tolist()[-1]}")
+
     # st.write("Data is updated daily")
     # st.write("It is provided by John Hopkins University: https://github.com/CSSEGISandData/COVID-19")
-    df_original = df_confirmed
-    if data_choice == "Deaths":
-        df_original = df_deaths
-    # st.write("DF Original")
-    st.info("Data Loaded")
-    st.write(f"[Data]({DATA_SOURCE_URL}) last updated on: {df_original.columns.tolist()[-1]}")
-    show_data = st.checkbox("Show Data")
-    if show_data:
-        st.write(df_original.shape)
-        st.write(df_original)
-
-    # st.write(df_original.describe())
-    # st.write(df_original.dtypes)
-
     
+    if viz_choice == "World view":
 
-    df =  df_original.copy(deep=True)
-
-    countries = get_countries(df_original)
-    # st.write(countries)
-
-
-    st.subheader("Evolution of the total number of cases")
-
+        data_choice = st.sidebar.radio(
+        "Visualize numbers of ",
+        ["Infections", "Deaths", "Mortality Rate"],
+        index=0
+        )
+        log_scale_choice = st.sidebar.radio(
+            "Plot Y-axis Scale",
+            ["Standard", "Logarithmic"]
+        )
     
-    top_n = st.slider(
-        "Select number of most-infected countries to view",
-        min_value=5,
-        max_value=20,
-        value=7
-    )
+        df_original = df_confirmed
+        if data_choice == "Deaths":
+            df_original = df_deaths
+        if data_choice == "Mortality Rate":
+            df_original = get_df_mortality_rate(df_confirmed, df_deaths)
+        # st.write("DF Original")
+        
+        # st.write(f"[Data]({DATA_SOURCE_URL}) last updated on: {df_original.columns.tolist()[-1]}")
+        show_data = st.checkbox("Show Data")
+        if show_data:
+            st.write(df_original.shape)
+            st.write(df_original)
 
-    top_countries = get_top_countries(df, n=top_n)
-    # st.write(top_countries)
+        # st.write(df_original.describe())
+        # st.write(df_original.dtypes)
 
-    selected_countries = st.multiselect(
-        "Select the countries you want to visualize",
-        countries,
-        default=top_countries
-    )
+        
 
-    if selected_countries != []:
+        df =  df_original.copy(deep=True)
 
-        dfs_plot = {}
+        countries = get_countries(df_original)
+        # st.write(countries)
 
-        for country in selected_countries:
-            
-            df_plot = get_df_plot(df, country)
-            dfs_plot[country] = df_plot
 
-            # st.write(f"{country}")
-            # st.write(df_plot)
+        st.subheader("Evolution of the total number of cases")
+
+        
+        top_n = st.slider(
+            "Select number of most-infected countries to view",
+            min_value=5,
+            max_value=20,
+            value=7
+        )
+
+        top_countries = get_top_countries(df, n=top_n)
+        # st.write(top_countries)
+
+        selected_countries = st.multiselect(
+            "Select the countries you want to visualize",
+            countries,
+            default=top_countries
+        )
+
+        if selected_countries != []:
+
+            dfs_plot = {}
+
+            for country in selected_countries:
+                
+                df_plot = get_df_plot(df, country)
+                dfs_plot[country] = df_plot
+
+                # st.write(f"{country}")
+                # st.write(df_plot)
+                # st.write(dfs_plot.keys())
+
+
             # st.write(dfs_plot.keys())
 
+            fig = get_fig(dfs_plot, log_scale_choice)
 
-        # st.write(dfs_plot.keys())
+            st.write(fig)
 
-        fig = get_fig(dfs_plot, log_scale_choice)
+
+
+
+        st.subheader("Map of infections")
+
+        fig = get_map_plot(df)
 
         st.write(fig)
-
-
-
-
-    st.subheader("Map of infections")
-
-    fig = get_map_plot(df)
-
-    st.write(fig)
 
     # st.write("DF")
     # df =  df_original.copy(deep=True)
 
     # st.write(df.shape)
     # st.write(df)
+
+    if viz_choice == "Country view":
+        country_choice = st.selectbox(
+            "Country",
+            get_top_countries(df_original, n=len(get_countries(df_original)))
+        )
+    
+        mortality_rate, fig = get_fig_country(country_choice, df_confirmed, df_deaths)
+
+        st.write(f"Mortality rate in {country_choice}: {100*mortality_rate:.2f} %")
+
+        st.write(fig)
+
+
 
     st.info("""\
         Source code: [GitHub](https://github.com/Thomas2512/covid-visualizer) | [Thomas Wang](https://github.com/Thomas2512/)
