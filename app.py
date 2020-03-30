@@ -140,7 +140,7 @@ def get_map_plot(df2):
         title="Number of cases of Covid-19",
         
         width=1000,
-        height=1000)
+        height=500)
 
     return fig
 
