@@ -7,6 +7,7 @@ from PIL import Image
 
 import pandas as pd
 import numpy as np
+import math
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -18,6 +19,9 @@ DEATHS_SOURCE = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/maste
 
 COUNTRY_COL = "Country/Region"
 PROVINCE_COL = "Province/State"
+
+# Max scale factor for bubble size
+MAX_SCALE = 10000
 
 
 @st.cache
@@ -96,7 +100,7 @@ def get_fig(dfs_plot, log_scale_choice):
 
 
 @st.cache
-def get_map_plot(df2):
+def get_map_plot(df2, scale=50):
     # https://plotly.com/python/scatter-plots-on-maps/
     # https://plotly.com/python/bubble-maps/
     df = df2.copy(deep=True)
@@ -107,7 +111,7 @@ def get_map_plot(df2):
     #                  projection="natural earth")
 
     # st.write(df)
-    scale = 50
+    # scale = 50
 
     df["text"] = (
         df[COUNTRY_COL] 
@@ -316,7 +320,19 @@ def main():
 
         st.subheader("Map of infections")
 
-        fig = get_map_plot(df)
+
+        log_max_scale = math.log(MAX_SCALE)
+        log_scale = st.slider(
+            "Bubble size",
+            min_value=1,
+            max_value=int(log_max_scale),
+            value=5
+        )
+        scale = math.exp(log_scale)
+        st.write(scale)
+        st.write(int(log_max_scale))
+
+        fig = get_map_plot(df, scale)
 
         st.write(fig)
 
