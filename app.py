@@ -168,8 +168,11 @@ def get_df_mortality_rate(df_confirmed, df_deaths):
 def get_fig_country(country, df_confirmed, df_deaths):
     fig = go.Figure()
 
-    df_confirmed_country = get_df_plot(df_confirmed, country).cumsum(axis=0)
-    df_deaths_country = get_df_plot(df_deaths, country).cumsum(axis=0)
+    df_confirmed_country = get_df_plot(df_confirmed, country)
+    df_deaths_country = get_df_plot(df_deaths, country)
+
+    # df_confirmed_country = get_df_plot(df_confirmed, country).cumsum(axis=0)
+    # df_deaths_country = get_df_plot(df_deaths, country).cumsum(axis=0)
 
     # st.write(df_confirmed_country)
     # st.write(df_deaths_country)
