@@ -100,7 +100,7 @@ def get_fig(dfs_plot, log_scale_choice):
 
 
 @st.cache
-def get_map_plot(df2, scale=50):
+def get_map_plot(df2, scale=0.005):
     # https://plotly.com/python/scatter-plots-on-maps/
     # https://plotly.com/python/bubble-maps/
     df = df2.copy(deep=True)
@@ -111,7 +111,6 @@ def get_map_plot(df2, scale=50):
     #                  projection="natural earth")
 
     # st.write(df)
-    # scale = 50
 
     df["text"] = (
         df[COUNTRY_COL] 
@@ -133,7 +132,7 @@ def get_map_plot(df2, scale=50):
         mode = 'markers',
         marker = dict(
             # Changed it to np.max to avoid errors when JHU gives a negative number
-            size = np.maximum(df2[df2.columns.tolist()[-1]]/scale, 0),
+            size = np.maximum(df2[df2.columns.tolist()[-1]]*scale, 0),
             color = "red",
             line_width = 1,
             sizemode="area"
@@ -323,19 +322,22 @@ def main():
 
         st.subheader("Map of infections")
 
+        N_SIZES = 10
+        MIN_SIZE = 0.001
+        MAX_SIZE = 0.020
+        scales = np.geomspace(MIN_SIZE, MAX_SIZE, num=N_SIZES)
+        # st.write(scales)
 
-        log_max_scale = math.log(MAX_SCALE)
-        log_scale = st.slider(
+        bubble_size_int = st.slider(
             "Bubble size",
             min_value=1,
-            max_value=int(log_max_scale),
-            value=5
+            max_value=N_SIZES,
+            value=3
         )
-        scale = math.exp(log_scale)
-        st.write(scale)
-        st.write(int(log_max_scale))
 
+        scale = scales[bubble_size_int-1]
         fig = get_map_plot(df, scale)
+
 
         st.write(fig)
 
