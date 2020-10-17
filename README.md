@@ -1,5 +1,7 @@
 # Covid-19 Visualizer
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/Thomas2512/covid-visualizer/app.py/)
+
 https://covid19-visualizer.herokuapp.com/
 
 <img src="/img/screenshot_01.png" height="400">
