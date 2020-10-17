@@ -322,9 +322,9 @@ def main():
 
         st.subheader("Map of infections")
 
-        N_SIZES = 10
-        MIN_SIZE = 0.001
-        MAX_SIZE = 0.020
+        N_SIZES = 15
+        MIN_SIZE = 0.0001
+        MAX_SIZE = 0.002
         scales = np.geomspace(MIN_SIZE, MAX_SIZE, num=N_SIZES)
         # st.write(scales)
 
@@ -332,7 +332,7 @@ def main():
             "Bubble size",
             min_value=1,
             max_value=N_SIZES,
-            value=3
+            value=7
         )
 
         scale = scales[bubble_size_int-1]
