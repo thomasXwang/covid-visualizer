@@ -8,7 +8,7 @@ bleach==3.3.0
 blinker==1.4
 boto3==1.12.10
 botocore==1.15.10
-certifi==2019.11.28
+certifi==2022.12.7
 chardet==3.0.4
 Click==7.0
 colorama==0.4.3
