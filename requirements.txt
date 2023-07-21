@@ -52,7 +52,7 @@ prometheus-client==0.7.1
 prompt-toolkit==3.0.3
 protobuf==3.18.3
 pydeck==0.3.0b1
-Pygments==2.7.4
+Pygments==2.15.0
 pylint==2.4.4
 pyparsing==2.4.6
 pyrsistent==0.15.7
